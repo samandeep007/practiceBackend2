@@ -8,8 +8,8 @@ import uploadOnCloudinary from "../utils/cloudinary.js";
 const generateAccessAndRefreshToken = async(id) => {
     try {
         const user = await UserModel.findById(id);
-        const accessToken = user.generateAccessToken();
-        const refreshToken = user.generateRefreshToken();
+        const accessToken = await user.generateAccessToken();
+        const refreshToken = await user.generateRefreshToken();
 
         user.refreshToken = refreshToken;
         await user.save({validateBeforeSave: false});
@@ -55,7 +55,7 @@ const registerUser = asyncHandler(async(req, res) => {
     return res
     .status(200)
     .json(
-        new ApiResponse(200, "User registered successfully!", registerUser)
+        new ApiResponse(200, "User registered successfully!", registeredUser)
     )
 
 })
@@ -76,8 +76,8 @@ const login = asyncHandler(async(req, res) => {
     }
 
     //check if the password is correct
-    const isValidPassword = user.isValidPassword(password);
-
+    const isValidPassword = await user.isPasswordValid(password);
+  
     //If the password is not correct
     if(!isValidPassword){
         throw new ApiError(400, "Invalid credentials");
@@ -102,4 +102,28 @@ const login = asyncHandler(async(req, res) => {
     );
 })
 
-export {registerUser, login}
+const logout = asyncHandler(async(req, res) => {
+    const id = req.user._id;
+    await UserModel.findByIdAndUpdate(id, {
+        $unset: {
+            refreshToken: 1
+        }
+    })
+
+    console.log("User logged out successfully");
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
+
+    return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(
+        new ApiResponse(200, "User logged out successfully", {})
+    )
+
+})
+
+export {registerUser, login, logout}
