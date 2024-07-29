@@ -3,3 +3,5 @@ const asyncHandler = (apiHandler) => {
         Promise.resolve(apiHandler(req, res, next)).catch(error => next(error))
     }
 }
+
+export default asyncHandler;
