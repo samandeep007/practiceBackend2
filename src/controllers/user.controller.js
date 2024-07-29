@@ -101,3 +101,5 @@ const login = asyncHandler(async(req, res) => {
         new ApiResponse(200, "User login successful", {loggedInUser, refreshToken, accessToken})
     );
 })
+
+export {registerUser, login}
