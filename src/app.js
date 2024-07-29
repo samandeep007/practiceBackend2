@@ -12,6 +12,8 @@ const limiter = rateLimit({
     header: true
 })
 
+app.use(express.static('./public'));
+
 app.use(urlencoded({
     limit: "16kb",
     extended: true
