@@ -2,6 +2,7 @@ import cookieParser from 'cookie-parser';
 import express, { urlencoded } from'express';
 import rateLimit from 'express-rate-limit';
 import cors from 'cors';
+import { router as userRouter } from './routes/user.routes.js';
 
 const app = express();
 
@@ -31,5 +32,7 @@ app.use(cors({
 app.use(cookieParser());
 
 app.use(limiter);
+
+app.use('/api/auth', userRouter);
 
 export {app};

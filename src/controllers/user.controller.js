@@ -39,7 +39,7 @@ const registerUser = asyncHandler(async(req, res) => {
         throw new ApiError(400, "User Already Exists")
     }
 
-    const avatarLocalPath = req.file.path;
+    const avatarLocalPath = req.file?.path;
     const avatar = avatarLocalPath ? await uploadOnCloudinary(avatarLocalPath) : null;
 
     const newUser = await UserModel.create({
